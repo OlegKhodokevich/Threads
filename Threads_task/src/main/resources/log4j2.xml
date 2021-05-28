@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info">
+
+    <Properties>
+        <!--        <property name="LOG_DIR">logs</property>-->
+        <property name="pattern_file">%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n</property>
+        <property name="pattern_console">%relative [%t] %-5level %logger{36} - %msg%n</property>
+        <property name="LOG_DIR">logs_roll_arch</property>
+    </Properties>
+
+
+    <TresholdFilter level=" trace"/>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${pattern_console}"/>
+        </Console>
+        <RollingFile name="FileRolling" fileName="${LOG_DIR}/archlog.txt" append="true"
+                     filePattern="logs/${date:yyyy-MM-dd}/%d{yyyy-MM-dd_HH-mm}_%i.txt.zip">
+            <PatternLayout pattern="${pattern_file}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval = "24"/>
+                <SizeBasedTriggeringPolicy size="25 KB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+    </Appenders>
+    <Loggers>
+        <Logger name="Log_Console" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+        <Logger name="Log_File" level="info" additivity="false">
+            <AppenderRef ref="FileRolling"/>
+        </Logger>
+
+        <Root level="trace">
+            <AppenderRef ref="FileRolling"/>
+            <AppenderRef ref="Console" level="error"/>
+        </Root>
+    </Loggers>
+
+
+    <!--    <Appenders>-->
+    <!--        <Console name="Console" target="SYSTEM_OUT">-->
+    <!--            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>-->
+    <!--        </Console>-->
+    <!--    </Appenders>-->
+
+    <!--    <Loggers>-->
+    <!--        &lt;!&ndash;        <Logger name= "ru.javastudy.examples.User" level="debug" additivity="true">&ndash;&gt;-->
+    <!--        &lt;!&ndash;            <AppenderRef ref="Console"/>&ndash;&gt;-->
+    <!--        &lt;!&ndash;        </Logger>&ndash;&gt;-->
+
+    <!--        &lt;!&ndash; Root Logger &ndash;&gt;-->
+    <!--        <Root level="all">-->
+    <!--            <AppenderRef ref="Console"/>-->
+    <!--        </Root>-->
+    <!--    </Loggers>-->
+
+    <!--    <Appenders>-->
+    <!--        <File name="TxtFile" fileName="logs/log.txt" bufferedIO="true">-->
+    <!--            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>-->
+    <!--        </File>-->
+    <!--    </Appenders>-->
+
+    <!--    <Loggers>-->
+    <!--        <Root level="debug">-->
+    <!--            <AppenderRef ref="TxtFile"/>-->
+    <!--        </Root>-->
+    <!--    </Loggers>-->
+
+
+</Configuration>
+
