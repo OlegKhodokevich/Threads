@@ -1,0 +1,55 @@
+16:23:42.778 [Thread-5] INFO  by.khodokevich.port.entity.Storehouse - Ship № 5{ capacity = 20, state = waiting, purpose of arrival = UPLOADING} get Berth № 1.
+16:23:43.767 [Thread-4] INFO  by.khodokevich.port.entity.Ship - Ship № 4{ capacity = 20, state = in work, purpose of arrival = UPLOADING} has unloaded on Berth № 2.
+16:23:43.768 [Thread-4] INFO  by.khodokevich.port.entity.Storehouse - Number of containers in storehouse has changed. Current number of containers = 135
+16:23:45.773 [Thread-4] INFO  by.khodokevich.port.entity.Ship - Ship № 4{ capacity = 20, state = departing, purpose of arrival = UPLOADING} departed.
+16:23:45.774 [Thread-4] INFO  by.khodokevich.port.entity.Storehouse - Ship № 4{ capacity = 20, state = departing, purpose of arrival = UPLOADING} depart from Berth № 2.
+16:23:47.786 [main] INFO  by.khodokevich.port.entity.ShipFactory - Ship № 6{ capacity = 19, state = newcomer, purpose of arrival = UPLOADING} has arrived at the port.
+16:23:47.787 [Thread-7] INFO  by.khodokevich.port.entity.Storehouse - Ship № 6{ capacity = 19, state = waiting, purpose of arrival = UPLOADING} get Berth № 2.
+16:23:48.809 [Thread-5] INFO  by.khodokevich.port.entity.Ship - Ship № 5{ capacity = 20, state = in work, purpose of arrival = UPLOADING} has unloaded on Berth № 1.
+16:23:48.809 [Thread-5] INFO  by.khodokevich.port.entity.Storehouse - Number of containers in storehouse has changed. Current number of containers = 155
+16:23:50.825 [Thread-5] INFO  by.khodokevich.port.observer.impl.StorehouseObserverImpl - Storehouse sent containers. 
+16:23:50.825 [Thread-5] INFO  by.khodokevich.port.entity.Storehouse - Number of containers in storehouse has changed. Current number of containers = 105
+16:23:52.787 [main] INFO  by.khodokevich.port.entity.ShipFactory - Ship № 7{ capacity = 19, state = newcomer, purpose of arrival = LOADING} has arrived at the port.
+16:23:52.835 [Thread-5] INFO  by.khodokevich.port.entity.Ship - Ship № 5{ capacity = 20, state = departing, purpose of arrival = UPLOADING} departed.
+16:23:52.835 [Thread-8] INFO  by.khodokevich.port.entity.Storehouse - Ship № 7{ capacity = 19, state = waiting, purpose of arrival = LOADING} get Berth № 3.
+16:23:52.835 [Thread-5] INFO  by.khodokevich.port.entity.Storehouse - Ship № 5{ capacity = 20, state = departing, purpose of arrival = UPLOADING} depart from Berth № 1.
+16:23:53.795 [Thread-7] INFO  by.khodokevich.port.entity.Ship - Ship № 6{ capacity = 19, state = in work, purpose of arrival = UPLOADING} has unloaded on Berth № 2.
+16:23:53.795 [Thread-7] INFO  by.khodokevich.port.entity.Storehouse - Number of containers in storehouse has changed. Current number of containers = 124
+16:23:55.800 [Thread-7] INFO  by.khodokevich.port.entity.Ship - Ship № 6{ capacity = 19, state = departing, purpose of arrival = UPLOADING} departed.
+16:23:55.800 [Thread-7] INFO  by.khodokevich.port.entity.Storehouse - Ship № 6{ capacity = 19, state = departing, purpose of arrival = UPLOADING} depart from Berth № 2.
+16:23:57.799 [main] INFO  by.khodokevich.port.entity.ShipFactory - Ship № 8{ capacity = 17, state = newcomer, purpose of arrival = LOADING} has arrived at the port.
+16:23:57.802 [Thread-9] INFO  by.khodokevich.port.entity.Storehouse - Ship № 8{ capacity = 17, state = waiting, purpose of arrival = LOADING} get Berth № 1.
+16:23:58.854 [Thread-8] INFO  by.khodokevich.port.entity.Ship - Ship № 7{ capacity = 19, state = in work, purpose of arrival = LOADING}has loaded on Berth № 3.
+16:23:58.854 [Thread-8] INFO  by.khodokevich.port.entity.Storehouse - Number of containers in storehouse has changed. Current number of containers = 105
+16:24:00.864 [Thread-8] INFO  by.khodokevich.port.entity.Ship - Ship № 7{ capacity = 19, state = departing, purpose of arrival = LOADING} departed.
+16:24:00.864 [Thread-8] INFO  by.khodokevich.port.entity.Storehouse - Ship № 7{ capacity = 19, state = departing, purpose of arrival = LOADING} depart from Berth № 3.
+16:24:02.812 [main] INFO  by.khodokevich.port.entity.ShipFactory - Ship № 9{ capacity = 19, state = newcomer, purpose of arrival = LOADING} has arrived at the port.
+16:24:02.812 [Thread-10] INFO  by.khodokevich.port.entity.Storehouse - Ship № 9{ capacity = 19, state = waiting, purpose of arrival = LOADING} get Berth № 2.
+16:24:03.821 [Thread-9] INFO  by.khodokevich.port.entity.Ship - Ship № 8{ capacity = 17, state = in work, purpose of arrival = LOADING}has loaded on Berth № 1.
+16:24:03.821 [Thread-9] INFO  by.khodokevich.port.entity.Storehouse - Number of containers in storehouse has changed. Current number of containers = 88
+16:24:05.837 [Thread-9] INFO  by.khodokevich.port.entity.Ship - Ship № 8{ capacity = 17, state = departing, purpose of arrival = LOADING} departed.
+16:24:05.837 [Thread-9] INFO  by.khodokevich.port.entity.Storehouse - Ship № 8{ capacity = 17, state = departing, purpose of arrival = LOADING} depart from Berth № 1.
+16:24:07.819 [main] INFO  by.khodokevich.port.entity.ShipFactory - Ship № 10{ capacity = 16, state = newcomer, purpose of arrival = LOADING} has arrived at the port.
+16:24:07.819 [Thread-11] INFO  by.khodokevich.port.entity.Storehouse - Ship № 10{ capacity = 16, state = waiting, purpose of arrival = LOADING} get Berth № 1.
+16:24:08.831 [Thread-10] INFO  by.khodokevich.port.entity.Ship - Ship № 9{ capacity = 19, state = in work, purpose of arrival = LOADING}has loaded on Berth № 2.
+16:24:08.839 [Thread-10] INFO  by.khodokevich.port.entity.Storehouse - Number of containers in storehouse has changed. Current number of containers = 69
+16:24:10.842 [Thread-10] INFO  by.khodokevich.port.entity.Ship - Ship № 9{ capacity = 19, state = departing, purpose of arrival = LOADING} departed.
+16:24:10.842 [Thread-10] INFO  by.khodokevich.port.entity.Storehouse - Ship № 9{ capacity = 19, state = departing, purpose of arrival = LOADING} depart from Berth № 2.
+16:24:12.829 [main] INFO  by.khodokevich.port.entity.ShipFactory - Ship № 11{ capacity = 19, state = newcomer, purpose of arrival = LOADING} has arrived at the port.
+16:24:12.829 [Thread-12] INFO  by.khodokevich.port.entity.Storehouse - Ship № 11{ capacity = 19, state = waiting, purpose of arrival = LOADING} get Berth № 2.
+16:24:13.843 [Thread-11] INFO  by.khodokevich.port.entity.Ship - Ship № 10{ capacity = 16, state = in work, purpose of arrival = LOADING}has loaded on Berth № 1.
+16:24:13.843 [Thread-11] INFO  by.khodokevich.port.entity.Storehouse - Number of containers in storehouse has changed. Current number of containers = 53
+16:24:15.851 [Thread-11] INFO  by.khodokevich.port.entity.Ship - Ship № 10{ capacity = 16, state = departing, purpose of arrival = LOADING} departed.
+16:24:15.851 [Thread-11] INFO  by.khodokevich.port.entity.Storehouse - Ship № 10{ capacity = 16, state = departing, purpose of arrival = LOADING} depart from Berth № 1.
+16:24:17.840 [main] INFO  by.khodokevich.port.entity.ShipFactory - Ship № 12{ capacity = 15, state = newcomer, purpose of arrival = LOADING} has arrived at the port.
+16:24:17.841 [Thread-13] INFO  by.khodokevich.port.entity.Storehouse - Ship № 12{ capacity = 15, state = waiting, purpose of arrival = LOADING} get Berth № 1.
+16:24:18.846 [Thread-12] INFO  by.khodokevich.port.entity.Ship - Ship № 11{ capacity = 19, state = in work, purpose of arrival = LOADING}has loaded on Berth № 2.
+16:24:18.846 [Thread-12] INFO  by.khodokevich.port.entity.Storehouse - Number of containers in storehouse has changed. Current number of containers = 34
+16:24:20.861 [Thread-12] INFO  by.khodokevich.port.observer.impl.StorehouseObserverImpl - Storehouse received containers. 
+16:24:20.861 [Thread-12] INFO  by.khodokevich.port.entity.Storehouse - Number of containers in storehouse has changed. Current number of containers = 84
+16:24:22.877 [Thread-12] INFO  by.khodokevich.port.entity.Ship - Ship № 11{ capacity = 19, state = departing, purpose of arrival = LOADING} departed.
+16:24:22.877 [Thread-12] INFO  by.khodokevich.port.entity.Storehouse - Ship № 11{ capacity = 19, state = departing, purpose of arrival = LOADING} depart from Berth № 2.
+16:24:23.860 [Thread-13] INFO  by.khodokevich.port.entity.Ship - Ship № 12{ capacity = 15, state = in work, purpose of arrival = LOADING}has loaded on Berth № 1.
+16:24:23.860 [Thread-13] INFO  by.khodokevich.port.entity.Storehouse - Number of containers in storehouse has changed. Current number of containers = 69
+16:24:25.862 [Thread-13] INFO  by.khodokevich.port.entity.Ship - Ship № 12{ capacity = 15, state = departing, purpose of arrival = LOADING} departed.
+16:24:25.862 [Thread-13] INFO  by.khodokevich.port.entity.Storehouse - Ship № 12{ capacity = 15, state = departing, purpose of arrival = LOADING} depart from Berth № 1.

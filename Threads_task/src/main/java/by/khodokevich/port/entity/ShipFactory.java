@@ -1,19 +1,31 @@
 package by.khodokevich.port.entity;
 
 import by.khodokevich.port.util.GenerateId;
-
-import java.util.Random;
-import java.util.concurrent.ExecutorService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ShipFactory {
-    public Ship createShip (int ShipCapacity, ArrivalPurpose arrivalPurpose) {
+    private static final Logger LOGGER = LogManager.getLogger();
+    private boolean work;
+
+    public ShipFactory() {
+        this.work = true;
+    }
+
+    public boolean isWork() {
+        return work;
+    }
+
+    public void setWork(boolean work) {
+        this.work = work;
+    }
+
+    public Ship createShip(int capacity, ArrivalPurpose arrivalPurpose, long maxWaitSeconds) {
         int shipId = GenerateId.generateShipId();
-        Random random = new Random(47);
-        int capacity = 10 + random.nextInt((20-15)+1) + 15;
-        Ship ship = new Ship(shipId, capacity, arrivalPurpose);
-        Storehouse storehouse = Storehouse.getInstance();
-        ExecutorService executor = storehouse.getBerth();
-        executor.execute(ship);
+
+        Ship ship = new Ship(shipId, capacity, arrivalPurpose, maxWaitSeconds);
+        LOGGER.info(ship + " has arrived at the port.");
+
         return ship;
     }
 }

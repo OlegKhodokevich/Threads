@@ -2,7 +2,7 @@ package by.khodokevich.port.state;
 
 import by.khodokevich.port.entity.Ship;
 
-public class InUploadingShip implements IShipState{
+public class InUploadingShip implements IShipState {
     @Override
     public String getStatusName() {
         return StatusName.IN_WORK.getState();

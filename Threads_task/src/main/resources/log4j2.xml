@@ -35,7 +35,7 @@
 
         <Root level="trace">
             <AppenderRef ref="FileRolling"/>
-            <AppenderRef ref="Console" level="error"/>
+            <AppenderRef ref="Console" level="info"/>
         </Root>
     </Loggers>
 
