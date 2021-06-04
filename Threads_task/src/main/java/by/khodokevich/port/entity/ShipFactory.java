@@ -20,10 +20,10 @@ public class ShipFactory {
         this.work = work;
     }
 
-    public Ship createShip(int capacity, ArrivalPurpose arrivalPurpose, long maxWaitSeconds) {
+    public Ship createShip(int capacity, ArrivalPurpose arrivalPurpose) {
         int shipId = GenerateId.generateShipId();
 
-        Ship ship = new Ship(shipId, capacity, arrivalPurpose, maxWaitSeconds);
+        Ship ship = new Ship(shipId, capacity, arrivalPurpose);
         LOGGER.info(ship + " has arrived at the port.");
 
         return ship;

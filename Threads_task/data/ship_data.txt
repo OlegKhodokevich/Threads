@@ -1,5 +1,5 @@
-<capacity> 17 <ArrivalPurpose> loading <maxWaitSeconds> 40
-<capacity> 19 <ArrivalPurpose> uploading <maxWaitSeconds> 41
-<capacity> 20 <ArrivalPurpose> loading <maxWaitSeconds> 42
-<capacity> 15 <ArrivalPurpose> uploading <maxWaitSeconds> 35
-<capacity> 18 <ArrivalPurpose> loading <maxWaitSeconds> 75
+<capacity> 17 <ArrivalPurpose> loading
+<capacity> 19 <ArrivalPurpose> uploading
+<capacity> 20 <ArrivalPurpose> loading
+<capacity> 15 <ArrivalPurpose> uploading
+<capacity> 18 <ArrivalPurpose> loading

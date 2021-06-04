@@ -1,40 +1,35 @@
 package by.khodokevich.port.entity;
 
 import by.khodokevich.port.exception.ProjectPortException;
-import by.khodokevich.port.observer.StorehouseEvent;
-import by.khodokevich.port.observer.StorehouseObservable;
-import by.khodokevich.port.observer.StorehouseObserver;
-import by.khodokevich.port.observer.impl.StorehouseObserverImpl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
+import java.util.ArrayDeque;
 import java.util.Iterator;
-import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class Storehouse implements StorehouseObservable {
+public class Storehouse {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final int DEFAULT_MAX_CAPACITY = 100;
     private static final int DEFAULT_BETH_NUMBER = 2;
     private static final int PERCENTAGE_INITIAL_FILLING_STOREHOUSE = 50;
+    private static final int MIN_PERCENT_FILLING_STOREHOUSE = 25;
+    private static final int MAX_PERCENT_FILLING_STOREHOUSE = 75;
 
     private static int maxCapacity;
     private static int berthNumber;
+    private static Storehouse instance;
+    private static ReentrantLock lock = new ReentrantLock();
+    private static Timer timer;
 
     private int currentContainersNumber;
-    private ArrayList<Berth> berths;
-
-    private static Storehouse instance;
-
+    private ArrayDeque<Berth> berths;
     private Semaphore semaphore;
-    private static ReentrantLock lock = new ReentrantLock();
-    private static Condition condition = lock.newCondition();
 
-    private StorehouseObserverImpl observer = new StorehouseObserverImpl();
 
     private Storehouse() {
         if (maxCapacity == 0) {
@@ -43,93 +38,15 @@ public class Storehouse implements StorehouseObservable {
         if (berthNumber == 0) {
             berthNumber = DEFAULT_BETH_NUMBER;
         }
-        berths = new ArrayList<>();
+        berths = new ArrayDeque<>();
         for (int i = 0; i < berthNumber; i++) {
-            berths.add(new Berth());
+            berths.offerFirst(new Berth());
         }
         semaphore = new Semaphore(berthNumber, true);
         currentContainersNumber = (maxCapacity * PERCENTAGE_INITIAL_FILLING_STOREHOUSE / 100);
+        timer = new Timer();
+        timer.schedule(new TimerContainerProvider(),2000, 3000);
     }
-
-    public Berth getBerth(Ship ship, long maxWaitSeconds) throws ProjectPortException {
-        try {
-            lock.lock();
-            if (semaphore.tryAcquire(maxWaitSeconds, TimeUnit.SECONDS)) {
-                for (Berth berth : berths) {
-                    if (!berth.isBusy().get()) {
-                        berth.setBusy(true);
-                        LOGGER.info(ship + " get " + berth);
-                        return berth;
-                    }
-                }
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } finally {
-            lock.unlock();
-        }
-        throw new ProjectPortException(ship.toString() + " can't wait any longer. It is depart.");
-    }
-
-    public void releaseBerth(Ship ship, Berth berth) {
-        berth.setBusy(false);
-        LOGGER.info(ship + " depart from " + berth);
-        semaphore.release();
-    }
-
-    public boolean addContainers(int numberContainers) throws ProjectPortException {
-        boolean exit = false;
-        boolean operate = false;
-        try {
-            lock.lock();
-            while (!exit) {
-                if ((currentContainersNumber + numberContainers) <= maxCapacity) {
-                    currentContainersNumber = currentContainersNumber + numberContainers;
-                    LOGGER.info("Number of containers in storehouse has changed. Current number of containers = " + currentContainersNumber);
-                    exit = true;
-                    operate = true;
-                    notifyObservers();
-                } else {
-                    LOGGER.warn("Number of containers in storehouse more then max capacity. Please wait.");
-                    notifyObservers();
-                    exit = !(condition.await(5, TimeUnit.SECONDS) | (currentContainersNumber + numberContainers) <= maxCapacity);
-                }
-            }
-        } catch (InterruptedException e) {
-            throw new ProjectPortException("Can't await in add containers.");
-        } finally {
-            lock.unlock();
-        }
-        return operate;
-    }
-
-    public boolean takeContainers(int numberContainers) throws ProjectPortException {
-        boolean exit = false;
-        boolean operate = false;
-        try {
-            lock.lock();
-            while (!exit) {
-                if ((currentContainersNumber - numberContainers) >= 0) {
-                    currentContainersNumber = currentContainersNumber - numberContainers;
-                    LOGGER.info("Number of containers in storehouse has changed. Current number of containers = " + currentContainersNumber);
-                    exit = true;
-                    operate = true;
-                    notifyObservers();
-                } else {
-                    LOGGER.warn("Number of containers in storehouse less then it needs. Please wait.");
-                    notifyObservers();
-                    exit = !(condition.await(5, TimeUnit.SECONDS) | (currentContainersNumber - numberContainers) >= 0);
-
-                }
-            }
-        } catch (InterruptedException e) {
-            throw new ProjectPortException("Can't await in add containers ");
-        } finally {
-            lock.unlock();
-        }
-        return operate;
-    }
-
 
     public static Storehouse getInstance() {
         if (instance == null) {
@@ -144,6 +61,76 @@ public class Storehouse implements StorehouseObservable {
             }
         }
         return instance;
+    }
+
+    public Berth getBerth(Ship ship) throws ProjectPortException {
+        try {
+            lock.lock();
+            semaphore.acquire();
+            Berth berth = berths.removeLast();
+            LOGGER.info(ship + " get " + berth);
+            return berth;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            lock.unlock();
+        }
+        throw new ProjectPortException("Can't receive berth.");
+    }
+
+    public void releaseBerth(Berth berth) throws ProjectPortException {
+        try {
+            lock.lock();
+            berths.offerLast(berth);
+            LOGGER.info(berth + " is free.");
+        } catch (NullPointerException e) {
+            throw new ProjectPortException("Berth is null.");
+        } finally {
+            semaphore.release();
+            lock.unlock();
+        }
+    }
+
+    public void addContainers(int numberContainers) throws ProjectPortException {
+        boolean exit = false;
+        try {
+            lock.lock();
+            while (!exit) {
+                if ((currentContainersNumber + numberContainers) <= maxCapacity) {
+                    currentContainersNumber = currentContainersNumber + numberContainers;
+                    LOGGER.info("Number of containers in storehouse has changed. Current number of containers = " + currentContainersNumber);
+                    exit = true;
+                } else {
+                    LOGGER.warn("Number of containers in storehouse more then max capacity. Please wait.");
+                    TimeUnit.SECONDS.sleep(2);
+                }
+            }
+        } catch (InterruptedException e) {
+            throw new ProjectPortException("Can't await in add containers.");
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void takeContainers(int numberContainers) throws ProjectPortException {
+        boolean exit = false;
+        try {
+            lock.lock();
+            while (!exit) {
+                if ((currentContainersNumber - numberContainers) >= 0) {
+                    currentContainersNumber = currentContainersNumber - numberContainers;
+                    LOGGER.info("Number of containers in storehouse has changed. Current number of containers = " + currentContainersNumber);
+                    exit = true;
+                } else {
+                    LOGGER.warn("Number of containers in storehouse less then it needs. Please wait.");
+                    TimeUnit.SECONDS.sleep(2);
+                }
+            }
+        } catch (InterruptedException e) {
+            throw new ProjectPortException("Can't await in add containers ");
+        } finally {
+            lock.unlock();
+        }
     }
 
     public static int getMaxCapacity() {
@@ -166,27 +153,35 @@ public class Storehouse implements StorehouseObservable {
         return currentContainersNumber;
     }
 
-    @Override
-    public void attach(StorehouseObserver observer) {
+    class TimerContainerProvider extends TimerTask {
+        @Override
+        public void run() {
+            try {
+                lock.lock();
+                if(instance == null) {
+                    timer.cancel();
+                }
+                if (currentContainersNumber < maxCapacity * MIN_PERCENT_FILLING_STOREHOUSE / 100) {
+                    LOGGER.info("Storehouse received containers. ");
+                    addContainers(maxCapacity * MIN_PERCENT_FILLING_STOREHOUSE / 100);
+                }
+                if (currentContainersNumber > maxCapacity * MAX_PERCENT_FILLING_STOREHOUSE / 100) {
+                    LOGGER.info("Storehouse sent containers. ");
+                    takeContainers(maxCapacity  * MIN_PERCENT_FILLING_STOREHOUSE / 100);
+
+                }
+                System.out.println(" Rum Timer Task");
+            } catch (ProjectPortException e) {
+                LOGGER.info("Timer container provider can't change current container number. " + e.getMessage());
+            }finally {
+                lock.unlock();
+            }
+        }      //TODO
+
     }
 
-    @Override
-    public void detach() {
-    }
-
-    @Override
-    public void notifyObservers() throws ProjectPortException {
-        StorehouseEvent storehouseEvent = new StorehouseEvent(this);
-        if (observer == null) {
-            throw new ProjectPortException("Observer is null. " + this);
-        }
-        try {
-            TimeUnit.SECONDS.sleep(2);
-        } catch (InterruptedException e) {
-            throw new ProjectPortException("Can't sleep in notifyObserver.");
-        }
-        observer.updateNumberContainers(storehouseEvent);
-        condition.signalAll();
+    public static void cancelTimerContainerProvider() {
+        timer.cancel();
     }
 
     @Override
@@ -194,7 +189,7 @@ public class Storehouse implements StorehouseObservable {
         if (this == o) return true;
         if (!(o instanceof Storehouse)) return false;
         Storehouse that = (Storehouse) o;
-        return currentContainersNumber == that.currentContainersNumber && Objects.equals(berths, that.berths);
+        return currentContainersNumber == that.currentContainersNumber && this.berths.equals(berths);
     }
 
     @Override
@@ -203,7 +198,7 @@ public class Storehouse implements StorehouseObservable {
         Iterator iterator = berths.iterator();
         while (iterator.hasNext()) {
             Object obj = iterator.next();
-            result = result * 31 + (obj!=null ? obj.hashCode() : 0);
+            result = result * 31 + (obj != null ? obj.hashCode() : 0);
         }
         return result;
     }

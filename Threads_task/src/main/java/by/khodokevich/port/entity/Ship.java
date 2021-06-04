@@ -1,12 +1,11 @@
 package by.khodokevich.port.entity;
 
 import by.khodokevich.port.exception.ProjectPortException;
-import by.khodokevich.port.state.IShipState;
+import by.khodokevich.port.state.ShipState;
 import by.khodokevich.port.state.NewcomerShip;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class Ship extends Thread {
@@ -14,20 +13,15 @@ public class Ship extends Thread {
 
     private int shipId;
     private int shipCapacity;
-    private long maxWaitSeconds;
 
-    private IShipState shipState;
+    private ShipState shipState;
     private ArrivalPurpose arrivalPurpose;
 
-    private Storehouse storehouse;
-
-    public Ship(int shipId, int shipCapacity, ArrivalPurpose arrivalPurpose, long maxWaitSeconds) {
+    public Ship(int shipId, int shipCapacity, ArrivalPurpose arrivalPurpose) {
         this.shipId = shipId;
         this.shipCapacity = shipCapacity;
         this.arrivalPurpose = arrivalPurpose;
-        this.maxWaitSeconds = maxWaitSeconds;
         shipState = new NewcomerShip();
-        storehouse = Storehouse.getInstance();
     }
 
     public void nextShipStatus() {
@@ -38,7 +32,7 @@ public class Ship extends Thread {
         shipState.previousShipStatus(this);
     }
 
-    public void setShipState(IShipState shipState) {
+    public void setShipState(ShipState shipState) {
         this.shipState = shipState;
     }
 
@@ -50,7 +44,7 @@ public class Ship extends Thread {
         return shipCapacity;
     }
 
-    public IShipState getShipState() {
+    public ShipState getShipState() {
         return shipState;
     }
 
@@ -61,34 +55,36 @@ public class Ship extends Thread {
     @Override
     public void run() {
         Berth berth = null;
+
+        Storehouse storehouse = Storehouse.getInstance();
         try {
             shipState.nextShipStatus(this);
-            berth = storehouse.getBerth(this, maxWaitSeconds);
+            berth = storehouse.getBerth(this);
             TimeUnit.SECONDS.sleep(1);
             shipState.nextShipStatus(this);
 
-            TimeUnit.SECONDS.sleep(5);
-            boolean operation = false;
+            TimeUnit.SECONDS.sleep(10);
+
             if (arrivalPurpose == ArrivalPurpose.LOADING) {
                 LOGGER.info(this + "has loaded on " + berth.toString());
-                operation = storehouse.takeContainers(shipCapacity);
+                storehouse.takeContainers(shipCapacity);
             } else {
                 LOGGER.info(this + " has unloaded on " + berth.toString());
-                operation = storehouse.addContainers(shipCapacity);
+                storehouse.addContainers(shipCapacity);
             }
 
             shipState.nextShipStatus(this);
-            if (operation) {
-                LOGGER.info(this + " departed.");
-            } else {
-                LOGGER.info(this + " had not achieved purpose and departed next port.");
-            }
+            LOGGER.info(this + " departed.");
 
         } catch (InterruptedException | ProjectPortException e) {
             LOGGER.warn(this + " left the port. " + e.getMessage());
         } finally {
             if (berth != null) {
-                storehouse.releaseBerth(this, berth);
+                try {
+                    storehouse.releaseBerth(berth);
+                } catch (ProjectPortException e) {
+                    LOGGER.info("Can't be release berth.");
+                }
             }
         }
     }
@@ -98,14 +94,13 @@ public class Ship extends Thread {
         if (this == o) return true;
         if (!(o instanceof Ship)) return false;
         Ship ship = (Ship) o;
-        return shipId == ship.shipId && shipCapacity == ship.shipCapacity && maxWaitSeconds == ship.maxWaitSeconds && arrivalPurpose == ship.arrivalPurpose && Objects.equals(storehouse, ship.storehouse);
+        return shipId == ship.shipId && shipCapacity == ship.shipCapacity && arrivalPurpose == ship.arrivalPurpose;
     }
 
     @Override
     public int hashCode() {
         int result = shipId;
         result = result * 13 + shipCapacity;
-        result = result * 13 + (int) maxWaitSeconds;
         result = result * 13 + arrivalPurpose.hashCode();
         return result;
     }

@@ -8,6 +8,8 @@ import by.khodokevich.port.exception.ProjectPortException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -33,22 +35,36 @@ public class ThreadMain {
             }
         }.start();
 
+        List<Ship> ships = new ArrayList<>();
+        Ship ship = null;
         while (shipFactory.isWork()) {
             ArrivalPurpose[] allArrivalPurposes = ArrivalPurpose.values();
             ArrivalPurpose arrivalPurpose = allArrivalPurposes[random.nextInt(allArrivalPurposes.length)];
-            int maxWaitSecond = random.nextInt((60 - 20) + 1) + 20;
             int capacity = random.nextInt((20 - 15) + 1) + 15;
-
-            Ship ship = shipFactory.createShip(capacity, arrivalPurpose, maxWaitSecond);
+            ship = shipFactory.createShip(capacity, arrivalPurpose);
+            ships.add(ship);
             ship.start();
+
             try {
-                TimeUnit.SECONDS.sleep(5);
+                TimeUnit.SECONDS.sleep(3);
             } catch (InterruptedException e) {
-                throw new ProjectPortException(e);
+                throw new ProjectPortException("Can't sleep. " + Thread.currentThread().getName());
             }
         }
 
-//        Данные инициализации объектов считывать из файла. Данные в файле корректны.
+//        try {
+//            ship.join();
+//        } catch (InterruptedException e) {
+//            throw new ProjectPortException(e);
+//        }
 
+        try {
+            for (Ship element : ships) {
+                element.join();
+            }
+        } catch (InterruptedException e) {
+            throw new ProjectPortException("This thread can't be joined. Thread = " + ship);
+        }
+        Storehouse.cancelTimerContainerProvider();
     }
 }

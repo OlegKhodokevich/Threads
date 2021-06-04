@@ -9,17 +9,19 @@ import org.apache.logging.log4j.Logger;
 
 public class StorehouseObserverImpl implements StorehouseObserver {
     private static final Logger LOGGER = LogManager.getLogger();
+    private static final int MIN_PERCENT_FILLING_STOREHOUSE = 25;
+    private static final int MAX_PERCENT_FILLING_STOREHOUSE = 75;
 
     @Override
     public void updateNumberContainers(StorehouseEvent storehouseEvent) throws ProjectPortException {
         Storehouse storehouse = storehouseEvent.getSource();
-        if (storehouse.getCurrentContainersNumber() < Storehouse.getMaxCapacity() * 0.25) {
+        if (storehouse.getCurrentContainersNumber() < Storehouse.getMaxCapacity() * MIN_PERCENT_FILLING_STOREHOUSE / 100) {
             LOGGER.info("Storehouse received containers. ");
-            storehouse.addContainers((int) (Storehouse.getMaxCapacity() * 0.25));
+            storehouse.addContainers(Storehouse.getMaxCapacity() * MIN_PERCENT_FILLING_STOREHOUSE / 100);
         }
-        if (storehouse.getCurrentContainersNumber() > Storehouse.getMaxCapacity() * 0.75) {
+        if (storehouse.getCurrentContainersNumber() > Storehouse.getMaxCapacity() * MAX_PERCENT_FILLING_STOREHOUSE / 100) {
             LOGGER.info("Storehouse sent containers. ");
-            storehouse.takeContainers((int) (Storehouse.getMaxCapacity() * 0.25));
+            storehouse.takeContainers(Storehouse.getMaxCapacity()  * MAX_PERCENT_FILLING_STOREHOUSE / 100);
 
         }
     }

@@ -4,7 +4,7 @@ import by.khodokevich.port.entity.Ship;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-public class WaitingShip implements IShipState{
+public class WaitingShip implements ShipState {
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Override
