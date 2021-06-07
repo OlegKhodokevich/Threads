@@ -52,12 +52,6 @@ public class ThreadMain {
             }
         }
 
-//        try {
-//            ship.join();
-//        } catch (InterruptedException e) {
-//            throw new ProjectPortException(e);
-//        }
-
         try {
             for (Ship element : ships) {
                 element.join();

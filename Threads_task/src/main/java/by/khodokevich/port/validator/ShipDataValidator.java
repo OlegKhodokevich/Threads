@@ -7,7 +7,6 @@ public class ShipDataValidator {
     private static final Logger LOGGER = LogManager.getLogger();
 
     private static final String SHIP_DATA_REG_EXP = "\\s*<capacity>\\s*\\d{1,3}\\s*<ArrivalPurpose>\\s*[a-zA-Z]{1,10}\\s*";
-    String line = "<capacity> 18 <ArrivalPurpose> loading <maxWaitSeconds> 75";
 
     public static boolean validateShipData (String line) {
         LOGGER.info("Start validateShipData (String line). Line = " + line);
